@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="http://bootswatch.com/darkly/bootstrap.min.css">
+  <title>Facebook Graph Login</title>
+</head>
+<body>
+  <script>
+    window.fbAsyncInit = function() {
+      FB.init({
+        appId      : '1185523944889410',
+        xfbml      : true,
+        version    : 'v2.9'
+      });
+      FB.getLoginStatus(function(response) {
+        statusChangeCallback(response);
+    });
+    };
+
+    (function(d, s, id){
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "//connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function statusChangeCallback(response){
+      if(response.status === 'connected'){
+        console.log('Logged in and authenticated');
+        testAPI();
+      } else {
+        console.log('Not authenticated');
+      }
+    }
+
+    function checkLoginState(){
+      FB.getLoginStatus(function(response){
+        statusChangeCallback(response);
+      });
+    }
+
+    function testAPI(){
+      FB.api('me?fields=id,name,email,birthday,location', function(response){
+        if(response && !response.error){
+          console.log(response);
+          showUser(response);
+        }
+      })
+    }
+
+    function showUser(user){
+      let profile = `
+        <h3 class="text-center">${user.name}</h3>
+        <ul class="list-group">
+          <li class="list-group-item">User: ${user.id}</li>
+          <li class="list-group-item">Email: ${user.email}</li>
+          <li class="list-group-item">Birthday: ${user.birthday}</li>
+          <li class="list-group-item">Location: ${user.location.name}</li>
+        </ul>
+      `;
+      document.getElementById('profile').innerHTML = profile;
+    }
+
+
+
+  </script>
+  <div>
+    <fb:login-button scope="public_profile,email,user_birthday,user_location" onlogin="checkLoginState();">
+    </fb:login-button>
+  </div>
+  <div class="row">
+    <div class="col-lg-3"></div>
+    <div id='profile' class="col-lg-6"></div>
+    <div class="col-lg-3"></div>
+  </div>
+    
+</body>
+</html>
